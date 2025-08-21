@@ -6,6 +6,8 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import {ShareInputProps} from "@/types";
+
 
 const ImageThumbnail = ({ file }: { file: Models.Document }) => (
   <div className="file-details-thumbnail">
@@ -39,7 +41,7 @@ export const FileDetails = ({ file }: { file: Models.Document }) => {
 };
 
 
-export const ShareInput = ({ file, onInputChange, onRemove }: Props) => {
+export const ShareInput = ({ file, onInputChange, onRemove }: ShareInputProps) => {
   return (
     <>
       <ImageThumbnail file={file} />

@@ -31,13 +31,14 @@ import {
   updateFileUsers,
 } from "@/lib/actions/file.actions";
 import { usePathname } from "next/navigation";
-import { FileDetails, ShareInput } from "@/components/ActionsModalContent"; // Ensure these components exist
+import { FileDetails, ShareInput } from "@/components/ActionsModalContent";
+import {ActionType} from "@/types";
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [action, setAction] = useState<ActionType | null>(null);
-  const [name, setName] = useState(file.name.split('.')[0]); // Set initial name without extension
+  const [name, setName] = useState(file.name.split('.')[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [emails, setEmails] = useState<string[]>([]);
 
@@ -64,7 +65,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
         delete: () =>
           deleteFile({
             fileId: file.$id,
-            bucketFileId: file.bucketFileID, // <-- CORRECTED: 'Id' is now 'ID'
+            bucketFileId: file.bucketFileID,
             path,
           }),
       };
@@ -110,7 +111,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
             <Button onClick={closeAllModals}  className="modal-cancel-button">Cancel</Button>
             <Button onClick={handleAction} className="modal-submit-button">
               <p className="capitalize">{value}</p>
-              {isLoading && <Image src="/assets/icons/loader.svg" alt="loader" width={16} height={16} className="animate-spin ml-2" />}
+              {isLoading && <Image src="/assets/icons/loader.svg" alt="loader" width={16} height={16} className="animate-spin" />}
             </Button>
           </DialogFooter>
         )}
@@ -140,7 +141,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
               }}
             >
               {actionItem.value === "download" ? (
-                <Link href={constructDownloadUrl(file.bucketFileID)} download={file.name} className="flex items-center gap-2 w-full">
+                <Link href={constructDownloadUrl(file.bucketFileID)} download={file.name} className="flex items-center gap-2">
                   <Image src={actionItem.icon} alt={actionItem.label} width={20} height={20} />
                   {actionItem.label}
                 </Link>

@@ -10,7 +10,21 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript","standard","plugin:tailwindcss/recommended","prettier"),
+  ...compat.extends(
+    "next/core-web-vitals",
+    "plugin:tailwindcss/recommended",
+    "prettier"
+  ),
+
+  // --- ADD THIS NEW OBJECT ---
+  {
+    settings: {
+      tailwindcss: {
+        // Tells the plugin where to find your config file
+        config: "tailwind.config.js",
+      },
+    },
+  },
 ];
 
 export default eslintConfig;

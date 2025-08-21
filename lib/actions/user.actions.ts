@@ -18,7 +18,7 @@ export const signIn = async ({ email, password }: signInParams) => {
       path: "/",
       httpOnly: true,
       sameSite: "strict",
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
     });
 
     return parseStringify(session);
@@ -68,7 +68,7 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
       path: "/",
       httpOnly: true,
       sameSite: "strict",
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
     });
 
     return parseStringify(newUserAccount);

@@ -1,8 +1,16 @@
 // types/index.d.ts
 
+// 1. ADD THIS IMPORT AT THE TOP
+import { Models } from "node-appwrite";
+
 /* eslint-disable no-unused-vars */
 
 declare type FileType = "document" | "image" | "video" | "audio" | "other";
+
+// 2. ADD THIS INTERFACE DEFINITION
+declare interface SegmentParams {
+  [key: string]: string;
+}
 
 declare interface ActionType {
   label: string;
@@ -11,8 +19,8 @@ declare interface ActionType {
 }
 
 declare interface SearchParamProps {
-  params?: Promise<SegmentParams>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+  params?: { [key: string]: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 declare interface UploadFileProps {
@@ -31,7 +39,7 @@ declare interface RenameFileProps {
   fileId: string;
   name: string;
   extension: string;
-  path: string;
+  path:string;
 }
 declare interface UpdateFileUsersProps {
   fileId: string;
@@ -39,10 +47,9 @@ declare interface UpdateFileUsersProps {
   path: string;
 }
 
-// --- THIS IS THE CORRECTED TYPE ---
 declare interface DeleteFileProps {
   fileId: string;
-  bucketFileID: string; // Corrected: 'Id' is now 'ID'
+  bucketFileID: string;
   path: string;
 }
 
@@ -53,7 +60,7 @@ declare interface FileUploaderProps {
 }
 
 declare interface MobileNavigationProps {
-  ownerId:string;
+  ownerId: string;
   accountId: string;
   fullName: string;
   avatar: string;
@@ -62,7 +69,7 @@ declare interface MobileNavigationProps {
 declare interface SidebarProps {
   fullName: string;
   avatar: string;
-  email: string;
+  email:string;
 }
 
 declare interface ThumbnailProps {

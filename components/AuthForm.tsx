@@ -78,13 +78,13 @@ const AuthForm = ({ type }: { type: "sign-in" | "sign-up" }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 auth-form">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
         <h1 className="form-title">
           {type === "sign-in" ? "Sign In" : "Sign Up"}
         </h1>
 
         {/* Display Server Error Message Here */}
-        {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+        {error && <p className="text-red-500 text-center text-sm">{error}</p>}
 
         {type === "sign-up" && (
           <FormField
