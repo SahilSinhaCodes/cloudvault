@@ -38,10 +38,10 @@ const MobileNavigation = ({
   return (
     <header className="mobile-header">
       <Image
-        src="/assets/icons/logo-full-brand.svg"
+        src="/assets/icons/cloud.png"
         alt="logo"
-        width={120}
-        height={52}
+        width={80}
+        height={30}
         className="h-auto"
       />
 

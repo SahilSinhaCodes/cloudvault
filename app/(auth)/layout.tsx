@@ -9,8 +9,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <Image
             src="/assets/icons/cloud-computing.png"
             alt="logo"
-            width={224}
-            height={82}
+            width={180}
+            height={70}
             className="h-auto"
           />
 
