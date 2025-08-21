@@ -14,7 +14,6 @@ export const signIn = async ({ email, password }: signInParams) => {
     const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession(email, password);
 
-    // Correctly await cookies() before calling .set()
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
       httpOnly: true,
@@ -23,22 +22,13 @@ export const signIn = async ({ email, password }: signInParams) => {
     });
 
     return parseStringify(session);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error signing in:", error);
-    return null;
-  }
-};
-
-export const signOut = async () => {
-  try {
-    const { account } = await createSessionClient();
-    // Correctly await cookies() before calling .delete()
-    (await cookies()).delete("appwrite-session");
-    await account.deleteSession("current");
-  } catch (error) {
-    // This is expected if the user is already logged out, so we can ignore it
-  } finally {
-    redirect("/sign-in");
+    // Check for specific Appwrite error for invalid credentials
+    if (error.type === "user_invalid_credentials") {
+      return { error: "Invalid email or password." };
+    }
+    return { error: "An unknown error occurred." };
   }
 };
 
@@ -58,9 +48,7 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
 
     if (!newUserAccount) throw new Error("Error creating user");
 
-    // ---  CHANGE THIS LINE ---
-    // Instead of generating an Appwrite URL, we assign a local static path.
-    const avatarUrl = "/assets/images/avatar.png";
+    const avatarUrl = "/assets/icons/avatar-placeholder.svg";
 
     const newUserDoc = await databases.createDocument(
       appwriteConfig.databaseId,
@@ -70,7 +58,7 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
         accountId: newUserAccount.$id,
         email: newUserAccount.email,
         fullName: newUserAccount.name,
-        avatar: avatarUrl, // This now saves the local path
+        avatar: avatarUrl,
       }
     );
 
@@ -84,9 +72,13 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
     });
 
     return parseStringify(newUserAccount);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error signing up:", error);
-    return null;
+    // Check for specific Appwrite error for existing user
+    if (error.type === "user_already_exists") {
+      return { error: "An account with this email already exists." };
+    }
+    return { error: "An unknown error occurred." };
   }
 };
 
@@ -99,8 +91,6 @@ export async function getLoggedInUser() {
     return null;
   }
 }
-
-// Add this new function inside lib/actions/user.actions.ts
 
 export const getUserInfo = async () => {
   try {
@@ -117,5 +107,17 @@ export const getUserInfo = async () => {
     return parseStringify(userDocs.documents[0]);
   } catch (error) {
     return null;
+  }
+};
+
+export const signOut = async () => {
+  try {
+    const { account } = await createSessionClient();
+    (await cookies()).delete("appwrite-session");
+    await account.deleteSession("current");
+  } catch (error) {
+    // This can be ignored, as it might throw if the session is already invalid.
+  } finally {
+    redirect("/sign-in");
   }
 };

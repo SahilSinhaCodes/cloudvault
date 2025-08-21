@@ -25,12 +25,13 @@ const authFormSchema = (type: "sign-in" | "sign-up") =>
   z.object({
     fullName: type === "sign-up" ? z.string().min(3) : z.string().optional(),
     email: z.string().email(),
-    password: z.string().min(8),
+    password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   });
 
 const AuthForm = ({ type }: { type: "sign-in" | "sign-up" }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(""); // State to hold our error messages
   const formSchema = authFormSchema(type);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,10 +45,16 @@ const AuthForm = ({ type }: { type: "sign-in" | "sign-up" }) => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+    setError(""); // Clear previous errors
+
     try {
       if (type === "sign-up") {
-        const newUser = await signUp(data);
-        if (newUser) router.push("/");
+        const response = await signUp(data);
+        if (response?.error) {
+          setError(response.error);
+        } else {
+          router.push("/");
+        }
       }
 
       if (type === "sign-in") {
@@ -55,10 +62,15 @@ const AuthForm = ({ type }: { type: "sign-in" | "sign-up" }) => {
           email: data.email,
           password: data.password,
         });
-        if (response) router.push("/");
+        if (response?.error) {
+          setError(response.error);
+        } else {
+          router.push("/");
+        }
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -66,10 +78,13 @@ const AuthForm = ({ type }: { type: "sign-in" | "sign-up" }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 auth-form">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 auth-form">
         <h1 className="form-title">
           {type === "sign-in" ? "Sign In" : "Sign Up"}
         </h1>
+
+        {/* Display Server Error Message Here */}
+        {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
         {type === "sign-up" && (
           <FormField
@@ -115,7 +130,7 @@ const AuthForm = ({ type }: { type: "sign-in" | "sign-up" }) => {
           )}
         />
 
-        <Button type="submit" disabled={isLoading} className="form-submit-button">
+        <Button type="submit" disabled={isLoading} className="form-submit-button w-full">
           {isLoading ? (
             <Image
               src="/assets/icons/loader.svg"
